@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AbioGenesis — Hadean Garden</title>
+  <meta name="theme-color" content="#0B1726" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="apple-touch-icon" href="assets/logo-mark.png" />
+  <link rel="mask-icon" href="assets/favicon.svg" color="#64F7D2" />
+  <link rel="stylesheet" href="style.css?v=abiogenesis-1" />
+</head>
+<body>
+  <!-- Hidden SVG filter: warps the composited scene like a moving water surface -->
+  <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+    <defs>
+      <filter id="waterRipple" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.010 0.018" numOctaves="1" seed="7" result="noise">
+          <animate attributeName="baseFrequency" dur="26s" values="0.010 0.018;0.013 0.022;0.010 0.018" repeatCount="indefinite" />
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Scene layer: WebGL sketch background + click/effects canvas, warped together -->
+  <div id="sceneWrap">
+    <!-- WebGL sketch background: Ripple Draft platonic solids -->
+    <canvas id="platonicBackground" aria-hidden="true"></canvas>
+
+    <!-- Canvas stage: soup, particles, energy-event effects -->
+    <canvas id="stage"></canvas>
+  </div>
+
+  <!-- Underwater overlay: depth tint, caustic light, rising bubbles -->
+  <div id="waterOverlay" aria-hidden="true">
+    <div class="water-depth"></div>
+    <div class="water-tint"></div>
+    <div class="water-caustics"></div>
+    <div class="water-bubbles">
+      <span class="bubble" style="--x:4%; --size:5px; --dur:11s; --delay:0s;"></span>
+      <span class="bubble" style="--x:12%; --size:8px; --dur:14s; --delay:2.4s;"></span>
+      <span class="bubble" style="--x:19%; --size:4px; --dur:9.5s; --delay:5.1s;"></span>
+      <span class="bubble" style="--x:27%; --size:7px; --dur:13s; --delay:1.2s;"></span>
+      <span class="bubble" style="--x:35%; --size:5px; --dur:10.5s; --delay:6.8s;"></span>
+      <span class="bubble" style="--x:43%; --size:9px; --dur:15.5s; --delay:3.6s;"></span>
+      <span class="bubble" style="--x:51%; --size:4px; --dur:9s; --delay:0.8s;"></span>
+      <span class="bubble" style="--x:58%; --size:6px; --dur:12s; --delay:8.2s;"></span>
+      <span class="bubble" style="--x:66%; --size:8px; --dur:14.5s; --delay:4.4s;"></span>
+      <span class="bubble" style="--x:74%; --size:5px; --dur:10s; --delay:7.5s;"></span>
+      <span class="bubble" style="--x:81%; --size:7px; --dur:13.5s; --delay:2s;"></span>
+      <span class="bubble" style="--x:88%; --size:4px; --dur:9.8s; --delay:9.1s;"></span>
+      <span class="bubble" style="--x:94%; --size:6px; --dur:12.5s; --delay:5.6s;"></span>
+      <span class="bubble" style="--x:70%; --size:9px; --dur:16s; --delay:0.4s;"></span>
+    </div>
+  </div>
+
+  <!-- Transient milestone banner -->
+  <div id="banner" class="banner hidden"></div>
+
+  <!-- Top HUD -->
+  <header id="topbar">
+    <div class="brand" id="brand"></div>
+    <div class="pp-block" id="ppBlock">
+      <div class="pp-main"><span id="ppValue">0</span> <span class="pp-unit" id="ppUnit">PP</span></div>
+      <div id="ppRate" class="pp-rate"></div>
+    </div>
+    <!-- Prestige HUD (moved to the top-left cluster; keeps its element IDs) -->
+    <div id="prestigeBox" class="prestige-hud">
+      <div class="prestige-main">
+        <div class="prestige-stats">
+          <div class="stat-row"><span>Complexity</span><span id="complexityVal">0</span></div>
+          <div class="stat-row"><span>Prestige for</span><span id="projPoints">0</span></div>
+        </div>
+        <button id="prestigeBtn" class="primary">Prestige</button>
+      </div>
+      <div id="prestigeMeta" class="muted small"></div>
+    </div>
+    <div class="top-actions">
+      <button id="notesBtn" class="ghost">Field Notes</button>
+      <button id="saveBtn" class="ghost">Save</button>
+      <button id="resetBtn" class="ghost danger">Reset</button>
+      <span id="saveStatus"></span>
+    </div>
+  </header>
+
+  <!-- Ambient soup prompt (does not block clicks) -->
+  <div id="soupPrompt" class="center-prompt">
+    <h2 id="soupHeading"></h2>
+    <!-- Timed story narration (intro + transition beats) renders here -->
+    <div id="narration" class="narration"></div>
+  </div>
+
+  <!-- Left: resources -->
+  <aside id="resourcePanel" class="panel">
+    <img class="seed-watermark" src="assets/star-seed.svg" alt="" aria-hidden="true" />
+    <h3 id="resHeading"></h3>
+    <div id="resourceList"></div>
+  </aside>
+
+  <!-- Right: upgrades + goal progress + next phase -->
+  <aside id="rightPanel" class="panel">
+    <div id="upgradePanel"></div>
+
+    <div id="ribozymeBox" class="hidden">
+      <h3 id="riboHeading"></h3>
+      <div id="riboReqs" class="reqs"></div>
+      <button id="ribozymeBtn" class="primary wide" disabled>Achieve Ribozyme</button>
+    </div>
+
+    <div id="nextPhaseBox" class="hidden">
+      <h3 id="nextHeading"></h3>
+      <div id="nextPhaseBody"></div>
+    </div>
+  </aside>
+
+  <!-- Event log -->
+  <aside id="logPanel" class="panel">
+    <h3 id="logHeading"></h3>
+    <div id="eventLog"></div>
+  </aside>
+
+  <!-- Prestige draft modal -->
+  <div id="draftModal" class="modal hidden">
+    <div class="modal-box">
+      <h2 id="draftHeading"></h2>
+      <p class="muted">Repeated prestiges shape your lineage. Choose one adaptation to keep.</p>
+      <div id="draftCards"></div>
+    </div>
+  </div>
+
+  <!-- Field Notes: design ideas and future chemistry, not yet implemented -->
+  <div id="notesModal" class="modal hidden">
+    <div class="modal-box notes-box">
+      <h2 id="notesHeading"></h2>
+      <p class="muted">Concepts kept on record for later phases of the game.</p>
+      <div id="notesBody" class="notes-body"></div>
+      <button id="notesClose" class="ghost">Close</button>
+    </div>
+  </div>
+
+  <script src="js/config.js?v=abiogenesis-1"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    window.THREE || document.write('<script src="js/vendor/three.r128.min.js"><\/script>');
+  </script>
+  <script src="js/platonic-background.js?v=abiogenesis-1"></script>
+  <script src="js/state.js?v=abiogenesis-1"></script>
+  <script src="js/engine.js?v=abiogenesis-1"></script>
+  <script src="js/render.js?v=abiogenesis-1"></script>
+  <script src="js/ui.js?v=abiogenesis-1"></script>
+</body>
+</html>

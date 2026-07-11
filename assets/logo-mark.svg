@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="AbioGenesis mark">
+  <defs>
+    <radialGradient id="disc" cx="42%" cy="38%" r="72%">
+      <stop offset="0%" stop-color="#12233A"/>
+      <stop offset="100%" stop-color="#07111F"/>
+    </radialGradient>
+    <!-- One ring tick, reused around the circle -->
+    <g id="tick">
+      <rect x="248" y="82" width="16" height="42" rx="7"/>
+    </g>
+  </defs>
+
+  <!-- Dark field disc -->
+  <circle cx="256" cy="256" r="224" fill="url(#disc)" stroke="#0B1726" stroke-width="6"/>
+
+  <!-- Outer broken Genesis ring -->
+  <circle cx="256" cy="256" r="204" fill="none" stroke="#64F7D2" stroke-width="8"
+          stroke-linecap="round" stroke-dasharray="300 82" stroke-dashoffset="40" opacity="0.45"/>
+  <!-- Bright highlight arc (top-left sweep) -->
+  <path d="M 96 300 A 168 168 0 0 1 176 122" fill="none" stroke="#ECFEFF" stroke-width="10"
+        stroke-linecap="round" opacity="0.9"/>
+
+  <!-- Segment ring: ticks cycle through the brand accents -->
+  <g>
+    <use href="#tick" fill="#64F7D2" transform="rotate(-30 256 256)"/>
+    <use href="#tick" fill="#2DD4BF" transform="rotate(0 256 256)"/>
+    <use href="#tick" fill="#38BDF8" transform="rotate(30 256 256)"/>
+    <use href="#tick" fill="#A7F3D0" transform="rotate(60 256 256)"/>
+    <use href="#tick" fill="#6EE7B7" transform="rotate(90 256 256)"/>
+    <use href="#tick" fill="#64F7D2" transform="rotate(120 256 256)"/>
+    <use href="#tick" fill="#2DD4BF" transform="rotate(150 256 256)"/>
+    <use href="#tick" fill="#38BDF8" transform="rotate(180 256 256)"/>
+    <use href="#tick" fill="#A7F3D0" transform="rotate(210 256 256)"/>
+    <use href="#tick" fill="#6EE7B7" transform="rotate(240 256 256)"/>
+  </g>
+
+  <!-- White center disc + mint star seed -->
+  <circle cx="256" cy="256" r="72" fill="#F6FEFF" stroke="#CBD5DF" stroke-width="4"/>
+  <path d="M256 214 L266.4 241.6 L295.9 243.0 L272.8 261.4 L280.6 289.7 L256 273.5 L231.4 289.7 L239.2 261.4 L216.1 243.0 L245.6 241.6 Z"
+        fill="#A7F3D0" stroke="#7FBFA6" stroke-width="3" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,94 @@
+# Branch Board
+
+This file is the live branch status board for AI-assisted Git work in IdleLife.
+Agents should update it whenever they create, change, test, review, abandon, or
+merge a branch.
+
+Current version: 0.1.6
+
+## Rules Snapshot
+
+- main is the trusted app state William uses.
+- review is the integration and release-candidate layer when needed.
+- Active work happens on named branches before review or main.
+- William alone approves merges from review or feature branches into main.
+- Default version bump after an approved merge to main: increment the last digit unless William says otherwise.
+
+## Active Branches
+
+| Branch | Category | Purpose | Agent | Base | Status | Dependencies | Verification | Version Impact | Last Update | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Review Queue
+
+| Branch | Included In Review? | Review Result | Merge Recommendation | Notes |
+| --- | --- | --- | --- | --- |
+
+## Merged To Main
+
+| Version | Branch Or Branch Set | Merge Date | Approved By | Summary |
+| --- | --- | --- | --- | --- |
+| 0.1.6 | ui/soup-strike-sprite-animations (+ pre-existing on-main commits c392362, 5f9fbe8) | 2026-07-06 | William | William: "implement them onto the main branch and cleanup all dirty work." Merged ui/soup-strike-sprite-animations into main `--no-ff` (`ALLOW_MAIN=1` guard override). Adds an optional per-event sprite-texture layer for the 6 soup-strike effects: render.js gained a sprite loader + runtime colour-tint (source-in) + additive stamp; each effect draws its `assets/fx/*.png` when present and falls back to the existing procedural draw when absent. config.js names each event's texture via a new `sprite:` field (lightning→bolt, uv→ray, cavitation→bubble, volcanic→volcano, geothermal→geothermal, meteor→meteor + `bloomSprite` spark). Committed William's 8 hand-made 256px near-white-on-transparent sprites (`bolt/ray/bubble/volcano/geothermal/meteor/spark`; `plume` kept as an unused spare). Bumped index.html `?v=` cache-bust 0.1.5→0.1.6. Clean auto-merge — the branch touched only config.js/render.js/assets/fx (+BRANCHES.md); no SAVE_KEY bump. NOTE: two prior commits authored directly on main by a concurrent session (`c392362` keep resource groups open, `5f9fbe8` themed net-rate tooltips) were never recorded on this board and are un-versioned; they are now bundled under 0.1.6 since they ship on this main. See Verification Notes below. |
+| 0.1.5 | ui/unaffordable-upgrade-red, fix/early-game-pacing-rebalance, feature/automatic-fixation, feature/early-game-narrative-reveal | 2026-07-05 | William | Merged all four outstanding branches into main in one pass (William: "merge all the current branches into main"), each as its own `--no-ff` commit in that order. ui/unaffordable-upgrade-red: red disabled Buy buttons (CSS only). fix/early-game-pacing-rebalance: slower early game (h2 25→125, aminoAcids 15→230, meteor weight 6→2, meteor H2 grants ~halved, armageddon_it bias 0.35→0.7). feature/automatic-fixation: new Chemistry "Automatic Fixation" upgrade (passive CO2+N2→NO after Reducing Environment) + its engine tick block. feature/early-game-narrative-reveal: progressive reveal (soup+title only → resources@1 / upgrades@3 / log@10 strikes), timed narration queue, 30-strike meteor lockout + first-meteor beat, Redox/Amino/firstRNA milestone narrations, Ocean Activity path (Bubble Cavitation, moved behind an upgrade) + Nature Hot/Dry Cycles/Surface Minerals/Protected Pools, minimal RNA capstone (rna resource + assembly reaction + firstRNA milestone), prestige HUD hidden until reducing. Only conflicts were in BRANCHES.md (all four add rows) plus trivial ones; config.js/engine.js/style.css auto-merged cleanly because the narrative branch never touched the pacing branch's numeric lines. No SAVE_KEY bump. See Verification Notes below. |
+| 0.1.4 | feature/paths-upgrades, ui/abiogenesis-rebrand | 2026-07-03 | William | Merged both branches into main in one pass (William approved merging "everything"). feature/paths-upgrades added the in-run Upgrades panel (Chemistry/Metabolism/Nature/Membrane/Defense Paths, bought with live resources, reset by prestige) and moved the Prestige HUD to the topbar. ui/abiogenesis-rebrand, built on top of it, redesigned the page around the AbioGenesis: Hadean Garden brand: new `assets/` vector marks (logo/favicon/star-seed token), renamed the product and page title, flipped UI chrome to light-ice over the retinted-dark Hadean scene, harmonized every resource/event/canvas-FX/WebGL-background color to the brand palette, added serif/mono brand typography, and applied the brand system motifs (star-seed watermark, Genesis-loop modal frame, subflare hazard texture, circular-badge Path accents). Gameplay values untouched by either branch — `feature/paths-upgrades` added new mechanics behind new config keys only, and `ui/abiogenesis-rebrand`'s `config.js` diff touched only color/copy/path-accent fields. No SAVE_KEY bump. See Verification Notes below. |
+| 0.1.3 | fix/product-resource-reveal, ui/default-white-control-cleanup (selective), stashed prototype work | 2026-07-02 | William | Unified all outstanding branches and dirty work into main in one pass, per William's request. fix/product-resource-reveal merged cleanly (resource rows now hide until their displayed amount is > 0). An orphaned stash sitting on top of that branch (untracked `prototypes/platonic-background/` scratch page, no tracked-file changes) was recovered and committed as-is. ui/default-white-control-cleanup was cut before the Reduction Age rework landed and could not merge verbatim (add/add conflict on js/platonic-background.js, heavy overlap on config.js/ui.js/render.js/state.js); its WebGL background/underwater-FX and old resource-visibility approach turned out to already be superseded by main, so it was recorded merged with `-s ours` and its still-needed pieces (collapsible resource groups, Field Notes modal, scrollbar/focus-visible chrome CSS) were hand-ported in a follow-up commit. See Verification Notes below. |
+| 0.1.2 | feature/reduction-age-progression | 2026-07-02 | William | Merged the Reduction Age mechanics rework with the underwater 3D Ripple lattice UI. Adds the config-driven neutral/oxidizing-to-reducing chemistry arc, derived Redox Charge, strike/passive reactions, goal-progress UI, Three.js lattice background, Claude underwater caustics/bubbles, and depth haze treatment. Save key bumped to v3. |
+| 0.1.1 | Early-game rework (direct-to-main, William-approved) | 2026-07-01 | William | Replaced the cell/ATP/threats/death early game with the Hadean-soup → energy-inputs → RNA-World → soft-prestige → Ribozyme progression. Fully config-driven (js/config.js). Removed ATP, cells, threats, waste, death, decay, offline. Next phase (Compartmentalization) is a locked placeholder. Save key bumped to v2 (old saves ignored). |
+| 0.1.0 | Git fleet baseline | 2026-06-28 | William | Current project state imported into the standardized local Git fleet. |
+
+## Verification Notes
+
+### 0.1.6 Soup-strike sprite textures
+
+- Commands: `node --check js/config.js js/render.js` (pass, pre- and post-merge). Merged with `ALLOW_MAIN=1 git merge --no-ff` (global main-guard hook).
+- Design: sprite art is optional and data-driven. `render.js` `loadSprite`/`tintedSprite`/`stampSprite` load `assets/fx/<name>`, tint the near-white texture to the event colour via a cached `source-in` offscreen canvas, and stamp it with `"lighter"` compositing. Every strike effect (`bolts`/`meteors`/`plumes`/`bubbles`/`rays`) checks for its tinted sprite first and returns; if the image is missing or still decoding it runs the original procedural draw — so a deleted/renamed PNG never breaks the game. The meteor draws un-rotated (art is authored facing travel) and flashes `spark.png` on impact.
+- Browser QA (py http.server on an ad-hoc port; ports 8123/8137/8139 were held by a concurrent session): fresh load, no console errors; confirmed config maps lightning→bolt, uv→ray, cavitation→bubble, volcanic→volcano, geothermal→geothermal, meteor→meteor+spark; all 7 referenced textures fetch 200 and decode at 256×256; `G.render.playEvent` invoked for every event id (incl. sized/variant outcomes) with zero runtime errors; independently reproduced the exact `source-in` tint on a real PNG and got the event colour at full alpha. Also rendered an offline tinted-on-dark composite of all sprites to eyeball that each reads correctly in its event colour.
+- Known gap: `preview_screenshot` still times out on this WebGL/2D canvas (documented across earlier entries), so in-canvas motion wasn't screenshotted; verified via eval/DOM + the offline composite instead. A quick manual play-click of each event is worth doing once.
+- Concurrent-session note: another Claude session was live in this same working copy (its dev server + the `c392362`/`5f9fbe8` main commits). The sprite branch was developed and committed on `ui/soup-strike-sprite-animations`, then merged; main's working tree was left clean (only the untracked `Launch IdleLife.bat`, William's file, remains). The merged local branch was deleted as part of "cleanup all dirty work".
+
+### 0.1.5 Four-branch merge (pacing + auto-fixation + narrative reveal + red buttons)
+
+- Merged in order into `main` with `--no-ff` (override `ALLOW_MAIN=1`, the global main-guard hook): ui/unaffordable-upgrade-red → fix/early-game-pacing-rebalance → feature/automatic-fixation → feature/early-game-narrative-reveal.
+- Conflicts: only `BRANCHES.md` (each branch adds an Active-Branches row) — resolved by union, then the four rows moved to Merged To Main. `js/config.js`, `js/engine.js`, and `style.css` auto-merged with no conflicts: the narrative branch was cut from the pre-pacing base and never edited the meteor-weight or milestone-threshold lines, so the 3-way merge kept the pacing branch's deliberate values (meteor weight 2, h2 125, aminoAcids 230) while layering in the narrative additions and the automatic_fixation upgrade in separate regions.
+- Post-merge checks: `node --check` on config/engine/ui/state/render all pass. Grep-confirmed on merged main that all three code branches' additions coexist: pacing values (meteor weight 2 / h2 125 / aminoAcids 230), narrative additions (meteorMinStrikes, cavitation base weight 0, bubble_cavitation, ocean path, firstRNA, narratives block, engine meteor-lockout + narrate hooks), and automatic_fixation (config upgrade + engine autoNoFixationRate tick block).
+- Pre-merge, the narrative branch was independently browser-verified (see its subsection below); the other three were browser/simulation-verified on their own branches.
+- Not re-run: a combined post-merge browser smoke of all four together. The merges introduced no hand-resolved code conflicts (only BRANCHES.md text), so behavior equals the sum of the individually-verified branches. Balance caveat carried forward: nucleobase-stage pacing and prestige income were never re-simulated, and the pacing branch's slower thresholds now interact with the narrative reveal cadence and the automatic_fixation/ocean upgrades — worth a play-test if the mid-game feels off.
+
+### feature/early-game-narrative-reveal
+
+- Commands: `node --check js/config.js js/state.js js/engine.js js/render.js js/ui.js` (all pass).
+- Browser QA served with the `idlelife-reduction-age` launch config (py http.server, port 8137). Verification was eval-driven (deterministic reads of `G.state` / computed styles) plus screenshots, since the WebGL canvas makes pure-screenshot timing unreliable.
+- Confirmed, in one continuous run: fresh load shows only the soup + "Hadean Earth" + the timed intro (final CTA "Click to add energy." lingers); resources reveal at strike 1 (intro clears), upgrades+goal at 3, event log at 10; no meteor discovered through strike 30, first meteor at strike 70 firing the 3-line meteor narration with H2 accruing; Reducing Environment milestone fired its 4-line narration, revealed the prestige HUD, and unlocked the Ocean Activity path; buying "Bubble Cavitation" (base-weight-0 cavitation event) made cavitation strikes start firing within ~5 clicks; Amino Acids milestone fired its 3-line narration and unlocked Nature "Surface Minerals"/"Protected Pools"; completing the nucleobases and assembling a strand fired the `firstRNA` milestone narration ("Chemistry has learned to store and copy rough information.") and revealed the RNA row; reload persisted the strike count with NO narration re-fire and panels matching the count.
+- No console errors at any step.
+- Recovered, before starting: an uncommitted early-game pacing rebalance (belonged to `fix/early-game-pacing-rebalance`) was sitting in the working tree and followed a checkout. It was committed to its own branch (`dcd3281`) so it stays separate. That branch and this one both edit `js/config.js` and WILL conflict on merge (meteor weight, `aminoAcids`/`h2` thresholds) — William to decide integration order.
+- Not done: no `SAVE_KEY` bump (intentional — new state fields default cleanly, reveals derive from persisted `totalStrikes`).
+
+### 0.1.4 Paths & Upgrades + AbioGenesis rebrand
+
+- Commands: `git log --oneline main..ui/abiogenesis-rebrand`; `git merge --no-ff ui/abiogenesis-rebrand`; `node --check` on config.js/engine.js/render.js/state.js/ui.js post-merge.
+- Merge: `ui/abiogenesis-rebrand` (based on `feature/paths-upgrades`) merged into `main` with `--no-ff`, bringing in both commits as a single merge commit. William gave explicit go-ahead to merge both.
+- The repo's merge-guard hook blocked the first attempt ("Agents must not merge into main") and required `ALLOW_MAIN=1`. Re-ran with the override after William's explicit confirmation. William flagged that the hook's own message text may be out of date relative to the current BOTS.md wording — worth a look, not addressed in this pass.
+- Results: merge completed with no conflicts (BRANCHES.md, config.js, render.js, ui.js, style.css, index.html, engine.js, state.js all merged cleanly); all `node --check` passed post-merge; working tree clean.
+- Not re-run: full browser smoke test post-merge (both branches were already browser-verified pre-merge individually; the merge introduced no conflict resolution that could have altered behavior).
+
+### 0.1.3 Unified branch consolidation
+
+- Commands: `git status --short --branch`; `node --check js/config.js js/state.js js/engine.js js/render.js js/ui.js`; `git diff --check`.
+- Results: all JS syntax checks passed; `git diff --check` reported no issues; working tree clean after each merge step.
+- Investigation before merging: diffed each branch against main and against each other's likely overlap before touching anything. Confirmed js/platonic-background.js, the underwater water-tint/caustics/bubbles CSS, and #sceneWrap/#waterOverlay markup in main already strictly supersede ui/default-white-control-cleanup's version (main adds resize-timing fixes and diagnostics on top of the identical base). Confirmed main's config.js already carried `resourceGroups` and `futureNotes` with a comment expecting a "UI branch" to render them, which the ui branch never got to finish merging.
+- Browser QA: served with the `idlelife` launch config at http://localhost:8123/; verified fresh Hadean Earth load, "Hadean Atmosphere" resource group collapsed by default, "Prebiotic Chemistry" group appears only after a strike produces resources, Field Notes button opens a modal listing all 12 `futureNotes` entries and closes cleanly, reload preserves state, no console errors, no failed network requests.
+- Known gap: headless screenshot capture timed out on the WebGL canvas (`preview_screenshot`) — likely a capture-tooling limitation with the Three.js canvas, not a functional issue. Verified instead via accessibility snapshot, DOM eval, and click-driven interaction, all of which behaved correctly.
+- Local branches `fix/product-resource-reveal`, `ui/default-white-control-cleanup`, and `feature/reduction-age-progression` are now fully reachable from `main` (`git branch --merged main`). Not deleted — awaiting William's go-ahead per branch-deletion policy.
+
+### 0.1.1 Early-game rework
+
+- Commands: `git status --short --branch`; `node --check js/config.js`; `node --check js/state.js`; `node --check js/engine.js`; `node --check js/render.js`; `node --check js/ui.js`; `git diff --check`; `rg -n "ATP|atp|cellStats|threat|waste|death|phase|chemicals|worldArchive|applyOffline|soupChance|cellUI|worldBtn|respawnBtn|offlineNotice"`; `rg -n "confirm\(" js`.
+- Results: all JS syntax checks passed. `git diff --check` reported only CRLF normalization warnings. Stale-reference search in tracked app files only finds explanatory comments/copy or the new next-phase wording; the untracked `prototypes/` folder has unrelated animation `phase` variables and is not part of this commit.
+- Browser QA: served with `py -m http.server 8137 --bind 127.0.0.1`; verified fresh Hadean Earth load, named precursor resources, varied energy event rolls, RNA World unlock/reveals, prestige draft, draft persistence, Ribozyme purchase, Redox spend, Compartmentalization placeholder, save/load, and reset clearing progress.
+- Follow-up fixes from QA: 0-point prestige no longer advances prestige count or opens a draft; Reset no longer uses a browser `confirm()` dialog; mobile layout stacks panels under 700px to avoid overlap/clipping.
+- Visual QA: Chrome headless screenshots at 1280x720 and 390px-wide mobile/tall mobile showed desktop panels and stacked mobile panels without critical overlap.
+
+## Abandoned Or Superseded
+
+| Branch | Date | Reason | Notes |
+| --- | --- | --- | --- |

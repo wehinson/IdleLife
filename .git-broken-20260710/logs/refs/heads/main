@@ -1,0 +1,20 @@
+0000000000000000000000000000000000000000 5b968d452faa12a74826ac81e748646532601f37 wehinson <wehinson@gmail.com> 1782682502 -0500	commit (initial): chore(git): establish local Git baseline
+5b968d452faa12a74826ac81e748646532601f37 2fd05d117c7a594b965bad2ef17ab0b78b2ccc4a wehinson <wehinson@gmail.com> 1782885899 -0500	commit: feat(origin): replace early game with ribozyme progression
+2fd05d117c7a594b965bad2ef17ab0b78b2ccc4a 27cd101ef8d8cf23b577c87a7871d3a7b75ff35a wehinson <wehinson@gmail.com> 1782953911 -0500	commit (merge): merge: feature/reduction-age-progression into main
+27cd101ef8d8cf23b577c87a7871d3a7b75ff35a f7b4e745a73fdd4053e3b601ae5e3f4c58045c83 wehinson <wehinson@gmail.com> 1782974400 -0500	commit (merge): merge: fix/product-resource-reveal into main
+f7b4e745a73fdd4053e3b601ae5e3f4c58045c83 0da4ba47a1486c2c7d3343687c9a5f69ac0a1476 wehinson <wehinson@gmail.com> 1782974424 -0500	commit: chore(prototypes): recover stashed platonic-background prototype
+0da4ba47a1486c2c7d3343687c9a5f69ac0a1476 7e3a5a2c6a1c8f6a65bc14c762911418c641a4d3 wehinson <wehinson@gmail.com> 1782974807 -0500	merge ui/default-white-control-cleanup: Merge made by the 'ours' strategy.
+7e3a5a2c6a1c8f6a65bc14c762911418c641a4d3 ff828c751f9da8bc0e3a10e2e7632fbaa3d40b1b wehinson <wehinson@gmail.com> 1782974822 -0500	commit: ui(chrome): port collapsible resource groups + Field Notes modal from ui/default-white-control-cleanup
+ff828c751f9da8bc0e3a10e2e7632fbaa3d40b1b 05e05da77642819055f65be15f4c472f125ea32d wehinson <wehinson@gmail.com> 1782974884 -0500	commit: docs(branches): record 0.1.3 unified branch consolidation
+05e05da77642819055f65be15f4c472f125ea32d f89a311ab952987ee70e07410f18f0a34dbaa71d wehinson <wehinson@gmail.com> 1783109397 -0500	commit (merge): merge: ui/abiogenesis-rebrand (incl. feature/paths-upgrades) into main
+f89a311ab952987ee70e07410f18f0a34dbaa71d 02666d9c77e55bdf495fcc8fc4f76f93233a9bfc wehinson <wehinson@gmail.com> 1783109548 -0500	commit: docs(branches): record 0.1.4 paths-upgrades + abiogenesis merge
+02666d9c77e55bdf495fcc8fc4f76f93233a9bfc 0abdc801ad15e9081919a558ee86462ce84bc7e7 wehinson <wehinson@gmail.com> 1783307926 -0500	merge ui/unaffordable-upgrade-red: Merge made by the 'ort' strategy.
+0abdc801ad15e9081919a558ee86462ce84bc7e7 bb2fa5d6199c92666545c008a81467db8b82733a wehinson <wehinson@gmail.com> 1783308043 -0500	commit (merge): merge: fix/early-game-pacing-rebalance into main (0.1.5)
+bb2fa5d6199c92666545c008a81467db8b82733a 41ec39e2ba533a8dd930ced2ccd1842491ff5040 wehinson <wehinson@gmail.com> 1783308102 -0500	commit (merge): merge: feature/automatic-fixation into main (0.1.5)
+41ec39e2ba533a8dd930ced2ccd1842491ff5040 6570f51db53b21e81d38af0d0f378d8836390cfe wehinson <wehinson@gmail.com> 1783308217 -0500	commit (merge): merge: feature/early-game-narrative-reveal into main (0.1.5)
+6570f51db53b21e81d38af0d0f378d8836390cfe 1b587102a172d441591f5837fef79103af915b98 wehinson <wehinson@gmail.com> 1783308281 -0500	commit: docs(branches): record 0.1.5 four-branch merge; bump version
+1b587102a172d441591f5837fef79103af915b98 ebef169d395f3e0e914e7d37b059ec776495c489 wehinson <wehinson@gmail.com> 1783311444 -0500	commit: chore(cache): bump asset version to 0.1.5 so browsers reload merged JS/CSS
+ebef169d395f3e0e914e7d37b059ec776495c489 c392362f6e362ff99d4fdbb83fb030a42b6fbdc5 wehinson <wehinson@gmail.com> 1783314758 -0500	commit: ui(resources): keep resource groups open by default
+c392362f6e362ff99d4fdbb83fb030a42b6fbdc5 5f9fbe8e8da93b3a4445fca5a2d204e41bac4145 wehinson <wehinson@gmail.com> 1783315642 -0500	commit: ui(resources): add themed net-rate tooltips
+5f9fbe8e8da93b3a4445fca5a2d204e41bac4145 c1f2b9c8cc89e07871817abe101ebf242634a790 wehinson <wehinson@gmail.com> 1783316667 -0500	merge ui/soup-strike-sprite-animations: Merge made by the 'ort' strategy.
+c1f2b9c8cc89e07871817abe101ebf242634a790 ee2b3e9a5c3c384d611c557b966ea3a47adb8bf2 wehinson <wehinson@gmail.com> 1783316758 -0500	commit: chore(release): bump assets to 0.1.6 and record sprite merge on the board

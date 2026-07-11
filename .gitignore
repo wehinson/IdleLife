@@ -1,0 +1,51 @@
+﻿# Local secrets and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+
+# Local dependencies and build output
+node_modules/
+.venv/
+venv/
+env/
+dist/
+build/
+out/
+release/
+
+# Local caches and logs
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.cache/
+*.log
+*.tmp
+
+# Local databases and runtime state
+*.db
+*.db-journal
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Local editor and agent state
+.claude/settings.local.json
+.vscode/*.log
+.idea/
+.DS_Store
+Thumbs.db
+
+.claude/
+.vscode/
+
+
+# added during 2026-07-10 recovery
+*.pyc
+.venv*/
+
+.git-corrupt-backup/

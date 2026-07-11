@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Star seed">
+  <!-- Reusable brand token: grey ring + mint star seed -->
+  <circle cx="50" cy="50" r="34" fill="none" stroke="#AEB8C2" stroke-width="6"/>
+  <path d="M50,24 L56.47,41.10 L74.73,41.97 L60.46,53.40 L65.28,71.03 L50,61 L34.72,71.03 L39.54,53.40 L25.27,41.97 L43.53,41.10 Z"
+        fill="#A7F3D0" stroke="#AEB8C2" stroke-width="4" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chalkwater Background Studies</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="prototype-shell">
+    <canvas id="platonicStage" aria-label="Nested rotating Platonic solids background prototype"></canvas>
+
+    <section class="hud" aria-label="Prototype controls">
+      <div class="title-block">
+        <p class="eyebrow">IdleLife prototype</p>
+        <h1>Chalkwater Studies</h1>
+      </div>
+
+      <div class="preset-row" role="group" aria-label="Visual preset">
+        <button class="preset-btn active" type="button" data-preset="chalkwater01">Quiet Draft</button>
+        <button class="preset-btn" type="button" data-preset="chalkwater02">Dense Hatch</button>
+        <button class="preset-btn" type="button" data-preset="chalkwater03">Pale Wash</button>
+        <button class="preset-btn" type="button" data-preset="chalkwater04">Heavy Ink</button>
+        <button class="preset-btn" type="button" data-preset="chalkwater05">Wide Plate</button>
+        <button class="preset-btn" type="button" data-preset="chalkwater06">Deep Stack</button>
+        <button class="preset-btn" type="button" data-preset="chalkwater07">Ripple Draft</button>
+        <button class="preset-btn" type="button" data-preset="chalkwater08">Bone Lines</button>
+        <button class="preset-btn" type="button" data-preset="chalkwater09">Ghost Plate</button>
+      </div>
+
+      <div class="control-row">
+        <label for="speedControl">Speed</label>
+        <input id="speedControl" type="range" min="0" max="2" step="0.01" value="0.48" />
+      </div>
+
+      <div class="control-row">
+        <label for="opacityControl">Opacity</label>
+        <input id="opacityControl" type="range" min="0.12" max="1" step="0.01" value="0.55" />
+      </div>
+
+      <label class="toggle-row" for="pauseControl">
+        <input id="pauseControl" type="checkbox" />
+        <span>Pause</span>
+      </label>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    window.THREE || document.write('<script src="vendor/three.r128.min.js"><\/script>');
+  </script>
+  <script defer src="platonic-background.js"></script>
+</body>
+</html>

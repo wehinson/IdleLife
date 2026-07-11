@@ -1,0 +1,14 @@
+chore(release): bump assets to 0.1.6 and record sprite merge on the board
+
+Why:
+- Cache-bust merged render.js/config.js so browsers reload, and keep BRANCHES.md
+  accurate after the soup-strike sprite merge.
+
+What changed:
+- index.html: ?v=0.1.5 -> ?v=0.1.6 on style.css and all js/*.js.
+- BRANCHES.md: version 0.1.5 -> 0.1.6; cleared the Active row; added the 0.1.6
+  Merged-To-Main entry + Verification Notes. Recorded that the concurrent
+  session's on-main commits (c392362, 5f9fbe8) are now bundled under 0.1.6.
+
+Verification:
+- node --check on merged config.js/render.js passes; browser QA per notes.
