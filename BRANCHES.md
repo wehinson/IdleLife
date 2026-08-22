@@ -11,7 +11,7 @@ Current version: 0.1.6
 - main is the trusted app state William uses.
 - review is the integration and release-candidate layer when needed.
 - Active work happens on named branches before review or main.
-- William alone approves merges from review or feature branches into main.
+- Agents may merge ready review or feature branches into main without separate approval.
 - Default version bump after an approved merge to main: increment the last digit unless William says otherwise.
 
 ## Active Branches

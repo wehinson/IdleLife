@@ -2,7 +2,7 @@
 
 This file is the standing instruction set for any AI code editor or coding agent working in this project.
 
-The user, William, has final authority over what becomes part of the active app. Agents may inspect, propose, edit in the proper working area, create branches, commit branch work, run tests, and update the branch board. Agents must not merge work into `Main` unless William explicitly approves that exact merge.
+The user, William, has final authority over what becomes part of the active app. Agents may inspect, propose, edit in the proper working area, create branches, commit branch work, run tests, and update the branch board. Agents may merge ready work into `Main` without separate approval.
 
 ## Core Model
 
@@ -10,8 +10,8 @@ This project uses three conceptual states:
 
 | State | Meaning | Agent Permission |
 | --- | --- | --- |
-| `Main` | The trusted app state William actually uses. This should stay stable and release-worthy. | Read freely. Do not edit directly. Do not merge into it without William's approval. |
-| `Review` | The branch review and release-candidate layer. Related branches are gathered here for testing before they become `Main`. | Agents may prepare and update review branches. William decides what leaves `Review` for `Main`. |
+| `Main` | The trusted app state William actually uses. This should stay stable and release-worthy. | Read freely. Agents may merge ready work into it without separate approval. |
+| `Review` | The branch review and release-candidate layer. Related branches are gathered here for testing before they become `Main`. | Agents may prepare and update review branches. Agents may merge ready work from `Review` into `Main` without separate approval. |
 | `Active` | The live working area where Claude, Codex, or another agent makes changes before committing to a branch. | Agents do normal coding here. Dirty or unfinished work may stay here if it is not ready. |
 
 Avoid using the word "staging" for the release-candidate layer. In Git, staging already means the index of files prepared for a commit. Use `Review` for branch review and release preparation.
@@ -129,7 +129,7 @@ Verification:
 
 `Review` is the integration branch for work William might want in the next release. It answers the question: "What happens if these candidate branches are combined?"
 
-Agents may help combine feature branches into `Review` for testing if William asks. Agents may resolve conflicts inside `Review` or inside an agent branch. Agents must not resolve merge conflicts into `Main` without William's approval.
+Agents may help combine feature branches into `Review` for testing if William asks. Agents may resolve merge conflicts into `Main` when needed to complete ready work.
 
 Rules:
 
@@ -137,11 +137,11 @@ Rules:
 - `Review` may be temporarily broken while branches are being combined, but the goal is to make it testable.
 - A feature branch should be tested on its own before it is added to `Review` when practical.
 - When `Review` is ready, the agent reports what is included, what passed, what failed, and what still needs human judgment.
-- William decides whether `Review` or selected branches are merged into `Main`.
+- Agents may merge `Review` or selected ready branches into `Main` without separate approval.
 
 ## Merging Rules
 
-Agents must not merge into `Main` unless William explicitly says to merge a named branch or named set of branches into `Main`.
+Agents may merge ready branches into `Main` without separate approval.
 
 Agents may:
 
@@ -155,7 +155,6 @@ Agents may:
 Agents must not:
 
 - Directly edit files while checked out on `Main`.
-- Merge `Review` into `Main` without William's explicit approval.
 - Rebase shared branches.
 - Rewrite branch history unless William explicitly asks.
 - Delete branches without approval.
@@ -238,7 +237,7 @@ Rules:
 
 ## Files And Safety
 
-Agents may read project files as needed. Agents should not change `Main` files directly.
+Agents may read project files as needed. Agents may merge ready work into `Main` without separate approval.
 
 Never commit secrets or local credentials. Be especially careful with:
 
