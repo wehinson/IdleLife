@@ -1,79 +1,45 @@
-# AI Agent Git Workflow
+# AI Agent Workflow
 
 This file is the standing instruction set for any AI code editor or coding agent working in this project.
 
-The user, William, has final authority over what becomes part of the active app. Agents may inspect, propose, edit in the proper working area, create branches, commit branch work, run tests, and update the branch board. Agents may merge ready work into `Main` without separate approval.
+The user, William, has final authority over what becomes part of the shipped app. Agents may inspect, propose, edit on the working branch, commit, back up, run tests, and update the work log.
 
-## Core Model
+## Git Rules Come From RULES.md
 
-This project uses three conceptual states:
+The git rules for backup, branches, and shipping are in `C:\Code\The Librarian\RULES.md`. They apply to every agent in every project. When this file or a repo-specific file conflicts with `RULES.md`, `RULES.md` wins. Dewey (`C:\Code\The Librarian\dewey\AGENTS.md`) enforces them.
 
-| State | Meaning | Agent Permission |
-| --- | --- | --- |
-| `Main` | The trusted app state William actually uses. This should stay stable and release-worthy. | Read freely. Agents may merge ready work into it without separate approval. |
-| `Review` | The branch review and release-candidate layer. Related branches are gathered here for testing before they become `Main`. | Agents may prepare and update review branches. Agents may merge ready work from `Review` into `Main` without separate approval. |
-| `Active` | The live working area where Claude, Codex, or another agent makes changes before committing to a branch. | Agents do normal coding here. Dirty or unfinished work may stay here if it is not ready. |
+Summary (read `RULES.md` for the full rules and terms):
 
-Avoid using the word "staging" for the release-candidate layer. In Git, staging already means the index of files prepared for a commit. Use `Review` for branch review and release preparation.
+| Branch | Meaning |
+| --- | --- |
+| `main` | Always equal to the shipped version (the live app, or the last shipped release). |
+| `working` | The one branch where all changes are made. |
+| `working-<agent>` | Only when a second agent works in the same project at the same time, in its own folder `<project>-<agent>`. |
 
-`Main`, `Review`, and `Active` are workflow names. If a repository already uses lowercase branch names such as `main` or `review`, keep the existing casing and treat those branches as the corresponding workflow states. Do not rename branches just to match this document unless William asks.
+- Make all changes on `working`. Never make changes directly on `main`.
+- Do not open other branches unless William tells you to. Do not use prefixes such as `feature/` or `fix/`, a `Review` branch, or `-active` / `-review` folders.
+- Back up (commit and push `working` to GitHub) at least every 15 minutes while you work, and at the end of the session. Unfinished work is permitted in a backup; use commit type `wip`.
+- Changes go into `main` only when William says "ship it", "push everything", or "publish".
+- Before you work in a project, check and write the agent claim (`RULES.md` G2.5).
+- Do not rebase or rewrite history on `main` or `working`. Use merge commits.
 
-## Preferred Folder Layout
+## Splitting Large Briefs
 
-Use Git worktrees when practical so William can keep the real app open while agents work elsewhere.
+When a brief contains several kinds of work, keep them on `working`, but split them into separate commits by purpose and risk. This keeps each change easy to review and to revert. Common splits:
 
-Recommended layout for each project:
-
-| Folder | Branch | Purpose |
-| --- | --- | --- |
-| `<project>-main` | `Main` | Stable app William opens and uses. |
-| `<project>-active` | Current agent branch | Live coding workspace. |
-| `<project>-review` | `Review` | Combined testing area for candidate branches. |
-
-If the repo does not yet use worktrees, the agent should suggest setting them up before major work. For small documentation-only changes, a normal single checkout is acceptable if the current branch is not `Main` or William explicitly approves.
-
-## Branch Rules
-
-All meaningful changes happen on branches. A single large brief may become multiple branches if the work naturally separates into different risk areas or review categories.
-
-If William's brief does not already specify branch boundaries, the agent should propose a branch split before implementing substantial work. The agent may proceed without asking only when the task is small, obvious, and safely belongs in one branch.
-
-Branch names should use a broad type plus a short concrete description:
-
-| Prefix | Use For | Example |
-| --- | --- | --- |
-| `feature/` | New user-facing behavior or capabilities. | `feature/gmail-newsletter-sync` |
-| `ui/` | Visual layout, interaction, styling, or design-system work. | `ui/sidebar-navigation-refresh` |
-| `fix/` | Bug fixes and regressions. | `fix/meeting-capture-crash` |
-| `docs/` | Documentation, briefs, instructions, and planning files. | `docs/agent-git-workflow` |
-| `test/` | Test coverage, fixtures, and test infrastructure. | `test/article-ingestion-states` |
-| `refactor/` | Internal restructuring without intended behavior change. | `refactor/rss-acquisition-boundaries` |
-| `experiment/` | Risky, speculative, or disposable prototypes. | `experiment/local-model-routing` |
-| `release/` | Final release preparation. | `release/0.1.7` |
-
-Agents should not create vague branch names like `changes`, `updates`, `codex-work`, or `new-stuff`.
-
-## Large Brief Splitting
-
-When a brief contains several kinds of work, split by review risk and purpose. Common splits:
-
-| Work Type | Usually Separate? | Reason |
+| Work Type | Separate Commit? | Reason |
 | --- | --- | --- |
 | UI-only work | Yes | Easy to review visually and revert independently. |
 | Backend behavior | Yes | Higher chance of logic bugs or data issues. |
 | Database or schema changes | Yes | Needs special review and rollback thinking. |
 | External integrations | Yes | API keys, auth, rate limits, and sync behavior add risk. |
 | Tests | Sometimes | May travel with the feature, but large test infrastructure can stand alone. |
-| Refactors | Yes | Should not be hidden inside feature branches unless required. |
+| Refactors | Yes | Should not be hidden inside feature commits unless required. |
 | Docs | Usually yes | Keeps planning and implementation history clean. |
-
-If a branch depends on another branch, say so in `BRANCHES.md`.
 
 ## Commit Rules
 
-Agents may commit completed work to their own branch after reasonable verification. Agents should not commit broken work unless William asks for a checkpoint or the commit is clearly marked as unfinished.
-
-Unfinished work may remain in the `Active` working area. Do not force a commit just to make the tree clean if the work does not run or the approach is uncertain.
+Commit completed work after reasonable verification. Commit unfinished work as `wip` when the 15-minute backup rule requires it. Say clearly in the message what is unfinished.
 
 Commit messages should be detailed enough that William can understand the purpose from history without reading every diff.
 
@@ -105,7 +71,8 @@ Valid commit types:
 | `test` | Adds or repairs tests. |
 | `refactor` | Restructures code without intended behavior change. |
 | `chore` | Tooling, config, dependency, or maintenance work. |
-| `wip` | Explicit unfinished checkpoint, only when approved or necessary. |
+| `wip` | Unfinished checkpoint, for example a 15-minute backup. |
+| `release` | The merge of `working` into `main` when William ships. |
 
 Example:
 
@@ -125,50 +92,13 @@ Verification:
 - Manual OAuth flow not verified yet because credentials are not configured.
 ```
 
-## Review Branch
-
-`Review` is the integration branch for work William might want in the next release. It answers the question: "What happens if these candidate branches are combined?"
-
-Agents may help combine feature branches into `Review` for testing if William asks. Agents may resolve merge conflicts into `Main` when needed to complete ready work.
-
-Rules:
-
-- `Main` remains stable.
-- `Review` may be temporarily broken while branches are being combined, but the goal is to make it testable.
-- A feature branch should be tested on its own before it is added to `Review` when practical.
-- When `Review` is ready, the agent reports what is included, what passed, what failed, and what still needs human judgment.
-- Agents may merge `Review` or selected ready branches into `Main` without separate approval.
-
-## Merging Rules
-
-Agents may merge ready branches into `Main` without separate approval.
-
-Agents may:
-
-- Create branches.
-- Commit to agent branches.
-- Merge `Main` into an agent branch when needed to catch up, if there are no risky conflicts.
-- Merge agent branches into `Review` when William requests a review build.
-- Resolve conflicts on agent branches or `Review`.
-- Explain conflicts and recommend what to keep.
-
-Agents must not:
-
-- Directly edit files while checked out on `Main`.
-- Rebase shared branches.
-- Rewrite branch history unless William explicitly asks.
-- Delete branches without approval.
-- Use destructive Git commands such as `git reset --hard` or forced checkout to discard work unless William explicitly approves.
-
-For now, do not use rebasing. Prefer normal merge commits.
-
 ## Versioning Rules
 
 This project uses numeric release versions such as `0.1.0`, `0.1.12`, or `1.5.12`.
 
 Default rule:
 
-- Every approved merge from `Review` or from selected branches into `Main` bumps the last digit by one.
+- Every ship (merge of `working` into `main`) bumps the last digit by one.
 - Example: `0.1.0` becomes `0.1.1`.
 - Multi-digit numbers are normal. `0.1.9` becomes `0.1.10`.
 
@@ -176,13 +106,13 @@ William may override the default and instruct a larger bump:
 
 | Bump | When William May Choose It | Example |
 | --- | --- | --- |
-| Patch / last digit | Normal branch or release merge. | `0.1.7` -> `0.1.8` |
+| Patch / last digit | Normal ship. | `0.1.7` -> `0.1.8` |
 | Minor / middle digit | Meaningful feature set, workflow change, or release milestone. | `0.1.7` -> `0.2.0` |
 | Major / first digit | Major architecture change, public release, or breaking shift. | `0.9.4` -> `1.0.0` |
 
 Agents should default to patch bumps. If a set of changes looks larger than a patch, the agent should recommend a minor or major bump, but William decides.
 
-When version files exist, update them as part of the approved merge to `Main`. If no version file exists, add the version note to release notes or `BRANCHES.md` until William chooses a canonical version location.
+When version files exist, update them as part of the ship. If no version file exists, add the version note to release notes or `BRANCHES.md` until William chooses a canonical version location.
 
 ## Test And Verification Gate
 
@@ -197,31 +127,30 @@ Default verification ladder:
 | 3 | Unit tests | When the repo has tests. |
 | 4 | Build or typecheck | For apps, packages, and typed projects. |
 | 5 | Smoke test | When the app can be launched or a key flow can be manually checked. |
-| 6 | Review summary | Always before asking William to merge. |
+| 6 | Summary for William | Always before William ships. |
 
 Agents should inspect the repo to identify the real commands instead of inventing commands. Common examples include `npm test`, `npm run lint`, `npm run build`, `pytest`, `ruff check`, `cargo test`, `go test ./...`, or project-specific scripts.
 
-Before work is considered ready for `Review`, report:
+Before work is considered ready to ship, report:
 
-- Branch name.
-- Summary of changes.
+- Summary of changes on `working`.
 - Files changed.
 - Commands run.
 - Test results.
 - Known limitations.
-- Whether the branch is recommended for `Review`.
+- Whether you recommend shipping it.
 
 ## When Tests Fail
 
 If tests fail, the agent should keep working while the failure appears understandable and fixable. The agent should stop and report when:
 
 - The same class of fix has failed repeatedly.
-- The failure appears unrelated to the branch.
+- The failure appears unrelated to the change.
 - A required secret, service, account, or local dependency is missing.
 - Continuing would risk overwriting William's work.
 - The agent cannot identify the cause with reasonable confidence.
 
-Do not claim a branch is ready if verification failed. Use `BRANCHES.md` to mark it as `Blocked`, `Needs Attention`, or `Ready With Caveat`.
+Do not say that work is ready to ship if verification failed. Record it in `BRANCHES.md` as `Blocked`, `Needs Attention`, or `Ready With Caveat`.
 
 ## Handling William's Changes
 
@@ -229,15 +158,16 @@ William is the authority. If the working tree contains changes the agent did not
 
 Rules:
 
-- Check the working tree before editing.
+- Check the working tree and the agent claim before editing.
 - Do not overwrite user changes.
 - Do not revert user changes unless William explicitly asks.
 - If user changes affect the same files, inspect carefully and work with them.
 - If user changes make the task impossible to complete safely, stop and ask.
+- If you find changes that are not committed and no agent claims the folder, back them up on `working` and tell William (`RULES.md` G2.6).
 
 ## Files And Safety
 
-Agents may read project files as needed. Agents may merge ready work into `Main` without separate approval.
+Agents may read project files as needed.
 
 Never commit secrets or local credentials. Be especially careful with:
 
@@ -248,23 +178,20 @@ Never commit secrets or local credentials. Be especially careful with:
 - tokens
 - private certificates
 - local databases containing user data
+- personal data such as bank transactions (keep it in an ignored `local-only/` folder)
 - generated release builds unless the repo explicitly tracks them
 
-If a task requires editing sensitive files, ask William first and explain why.
+Add such files to `.gitignore` before the next backup. If a task requires editing sensitive files, ask William first and explain why.
 
-## Branch Board
+## Work Log
 
-Maintain `BRANCHES.md` as the current branch status board. Update it whenever a branch is created, materially changed, tested, added to `Review`, blocked, abandoned, or merged.
+`BRANCHES.md` is the work log for the project. Update it when work on `working` starts, changes materially, is tested, is blocked, or ships.
 
 At minimum, track:
 
-- Branch name.
-- Category.
-- Purpose.
+- What is on `working` and waiting to ship.
 - Agent.
-- Base branch.
 - Status.
-- Dependencies.
 - Test results.
 - Version impact.
 - Last update.
@@ -277,12 +204,10 @@ Suggested statuses:
 | `Active` | Work is currently happening. |
 | `Blocked` | Work cannot continue without a decision, dependency, or fix. |
 | `Needs Attention` | Agent is uncertain or tests failed in a way that needs review. |
-| `Ready for Review` | Branch appears complete and tested enough for William to inspect. |
-| `Ready With Caveat` | Branch is mostly ready, but has a clearly disclosed verification gap or limitation. |
-| `In Review` | Branch has been added to `Review` or is being tested there. |
-| `Approved for Main` | William approved it for `Main`, but it has not been merged yet. |
-| `Merged to Main` | William approved and the branch is now part of `Main`. |
-| `Abandoned` | Branch is intentionally set aside. |
+| `Ready to Ship` | Work appears complete and tested enough for William to ship. |
+| `Ready With Caveat` | Work is mostly ready, but has a clearly disclosed verification gap or limitation. |
+| `Shipped` | William shipped it and it is now part of `main`. |
+| `Abandoned` | Work is intentionally set aside. Save it as an `archive/<name>` tag first. |
 
 ## Repo-Specific Instructions
 
@@ -296,6 +221,5 @@ Repo-specific instructions may add details such as:
 - Protected files.
 - Release checklist.
 - Deployment checklist.
-- Project-specific branch prefixes.
 
-If repo-specific instructions conflict with this file, the agent should follow the stricter rule and ask William before taking risky action.
+If repo-specific instructions conflict with this file, the agent should follow the stricter rule and ask William before taking risky action. Git branch, backup, and ship rules always come from `RULES.md`.
