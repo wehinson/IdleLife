@@ -109,3 +109,12 @@ Historical entries and verification notes below are preserved records of earlier
 
 | Branch | Date | Reason | Notes |
 | --- | --- | --- | --- |
+
+## Dewey supervisory review - 2026-10-10
+
+- Reviewed instruction commit: 0920930ca8e2404b71a9a614fd02c528b1857a3d.
+- Result: Approved after reviewing workflow authority, branch isolation, effort control, backup, preview/review, merge approval, separate shipping, and preservation of project guidance.
+- Authority: William explicitly authorized supervised approval and integration for this instruction batch only.
+- Verification: Documentation-only scope, whitespace checks, full instruction diff review, and task backup verification passed. No app code or release changed.
+- Integration: The approved result and this review record are merged into working and backed up by Dewey; the exact merge commit is recorded in working history and The Librarian WORKFLOW-MIGRATION.md.
+- Earlier pending-review entries describe the task handoff and are superseded by this supervisory result. Main/releases remain separate.
