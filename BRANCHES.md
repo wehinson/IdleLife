@@ -8,23 +8,40 @@ Current version: 0.1.6
 
 ## Rules Snapshot
 
-- main is the trusted app state William uses.
-- review is the integration and release-candidate layer when needed.
-- Active work happens on named branches before review or main.
-- Agents may merge ready review or feature branches into main without separate approval.
-- Default version bump after an approved merge to main: increment the last digit unless William says otherwise.
+- Authority: William's current instructions, then the approved RULES.md version described in BOTS.md, then shared and repo-specific BOTS.md. Read approved rules with `git -C C:/Code/The-Librarian show working:RULES.md` (or `origin/working:RULES.md` after fetching) when that shared checkout is older. Shared roots: `C:/Code/The-Librarian`, `C:/Code/BOTS-BRIEFS`, and `C:/Code/Agents`.
+- `main` is the shipped app state; `working` is the active integration branch containing only task work William approved.
+- Small, related tasks may join an open task branch when scope and ownership permit. Separate work gets its own descriptive task branch, based on active `working` including committed work, in an isolated T3 checkout on Jimothy. Never implement on `working` or `main`.
+- Use GPT 6.1 Sol. Never change your own running session's effort; apply William's chosen effort only when creating other T3 threads. Run appropriate checks and commit/push the task branch at least every 15 minutes and at session end.
+- For app changes, provide a stable exact-checkout URL such as `/test1` on one shared preview port, confirming assets, API routes, and runtime use that checkout. Record branch, checkout, URL, commit, results, and limitations. Documentation-only tasks provide review artifacts; no app preview applies. Engine tests and explicit browser-permission rules in BOTS.md remain in force.
+- William tests the task; adjustments stay on its branch. Only his explicit approval of the tested result authorizes merging into `working`. Verify the combined result and back up `working` after that approval.
+- Ship approved `working` to `main` only after a separate ship instruction. Never automatically include unapproved task branches, delete active or unmerged work, or reset `working` at ship. Preserve unrelated work.
+- Default version bump at an authorized ship: increment the last digit unless William says otherwise. Implementation or integration alone does not bump the release version.
 
 ## Active Branches
 
 | Branch | Category | Purpose | Agent | Base | Status | Dependencies | Verification | Version Impact | Last Update | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| task/git-workflow-instructions-20261010 | Documentation | Migrate workflow instructions and provider entry points | Codex; GPT 6.1 Sol; EXTRA HIGH (William-selected) | Active origin/working at `06c26b7bf03a280d91232936c230d0f509ec8f60` | Ready for Dewey Review | Approved Librarian working rules at `8c447e74bc74787e810f6413849bcf2bcdf5549b` | PASS: `git diff --check`, full diff/authority review, six-file scope and historical-log preservation checks | None; current version remains 0.1.6 | 2026-10-10 | Isolated T3 checkout on Jimothy: `C:/Users/wehin/.t3/worktrees/IdleLife/task-git-workflow-instructions-20261010`. Scope: BOTS.md, AGENTS.md, CLAUDE.md, GEMINI.md, .github/copilot-instructions.md, BRANCHES.md. Review artifacts are these files and the task commit diff; no app preview applies. William authorized supervised batch approval; Dewey review/integration pending. Main/releases are not authorized, and this task agent will not merge or settle before integration. |
 
 ## Review Queue
 
 | Branch | Included In Review? | Review Result | Merge Recommendation | Notes |
 | --- | --- | --- | --- | --- |
+| task/git-workflow-instructions-20261010 | Yes; documentation artifacts | Agent checks passed; Dewey review/integration pending | William authorized supervised batch approval; Dewey review/integration pending. | Batch-specific authorization only; no standing approval exception or main/release authority. Adjustments stay on this task branch. No merge or ship performed. |
+
+## Current Task Verification
+
+### task/git-workflow-instructions-20261010 (2026-10-10)
+
+- Review artifacts: the six documents listed above and the commit diff on `task/git-workflow-instructions-20261010`. Review commit is the task branch tip containing this record; backup target is `origin/task/git-workflow-instructions-20261010`. Report the exact commit and verified remote backup in the session handoff.
+- Checks: `git -c core.longpaths=true diff --check` passed; full diff read against approved Librarian `working:RULES.md` and William's current instructions; stale operative workflow/path search found no remaining conflicts. Scope and preservation checks confirm only the six intended documents changed, historical release/verification logs remain intact, and commit conventions, versioning, and sensitive-file safeguards were preserved.
+- Git path limitation: plain Git status initially reported a deletion inside the tracked `.git-broken-20260710` archive because its path exceeds the Windows limit. Per-command `-c core.longpaths=true` confirms it is unchanged. No archive files or persistent long-path configuration were edited.
+- Documentation-only task: no app tests, browser automation, or preview server are needed. Version remains 0.1.6. Approved Librarian rules are integrated and backed up on local/remote `working` at `8c447e74bc74787e810f6413849bcf2bcdf5549b`; read that integration version with the stable Git command above when the shared checked-out branch is older.
+- Ready for Dewey's batch review. No implementation blockers. William authorized supervised batch approval; Dewey review/integration pending. This authorization is batch-specific and does not change the standing approval rules or authorize main/releases. Dewey will review, integrate into `working`, back up, and settle after integration. This task agent will only commit/push and report; it has not changed `working` or `main`.
 
 ## Merged To Main
+
+Historical entries and verification notes below are preserved records of earlier releases, not current workflow instructions or approval for future merges.
 
 | Version | Branch Or Branch Set | Merge Date | Approved By | Summary |
 | --- | --- | --- | --- | --- |
