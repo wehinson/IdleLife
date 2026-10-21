@@ -37,6 +37,7 @@ G.config = {
 
   /* --- Top-of-screen branding / soup framing copy --- */
   ui: {
+    saveRecovery: "Save could not be loaded. Original kept; saving paused. Reset discards it and starts over.",
     title: "AbioGenesis",
     subtitle: "· Hadean Garden",
     tagline: "From Chaos, Chemistry.",

@@ -252,64 +252,138 @@
   };
 
   /* --- Save / Load --- */
+  // Build a candidate without mutating live state. Missing fields still migrate
+  // through factory defaults; unknown/removed config ids are ignored as before.
+  G.hydrateSave = function (data) {
+    function invalid(path) { throw new Error("Invalid save field: " + path); }
+    function record(value, path) {
+      if (!value || typeof value !== "object" || Array.isArray(value)) invalid(path);
+      return value;
+    }
+    function optionalRecord(value, path) {
+      return value === undefined ? {} : record(value, path);
+    }
+    function number(value, fallback, path, integer, max) {
+      if (value === undefined) return fallback;
+      // Older hydration accepted numeric strings; retain that compatibility,
+      // but do not coerce null, booleans, empty strings, arrays or objects.
+      if (typeof value !== "number" &&
+          !(typeof value === "string" && value.trim() !== "")) invalid(path);
+      const n = Number(value);
+      if (!Number.isFinite(n) || n < 0 || (integer && !Number.isInteger(n)) ||
+          (max !== undefined && n > max)) invalid(path);
+      return n;
+    }
+    function flag(value, fallback, path) {
+      if (value === undefined) return fallback;
+      if (typeof value !== "boolean") invalid(path);
+      return value;
+    }
+    function flags(value, path, defaults) {
+      const input = optionalRecord(value, path);
+      const result = {};
+      for (const id of Object.keys(defaults || input)) {
+        Object.defineProperty(result, id, {
+          value: flag(input[id], false, path + "." + id),
+          enumerable: true, writable: true, configurable: true,
+        });
+      }
+      return result;
+    }
+    record(data, "root");
+    if (data.version !== undefined && data.version !== 3) invalid("version");
+    const s = G.factory();
+    const resources = optionalRecord(data.resources, "resources");
+    for (const id in s.resources) {
+      s.resources[id] = number(resources[id], 0, "resources." + id);
+    }
+    s.milestones = flags(data.milestones, "milestones", s.milestones);
+    s.discovered = flags(data.discovered, "discovered");
+    s.rareDiscovered = flags(data.rareDiscovered, "rareDiscovered");
+    s.highestRedox = number(data.highestRedox, 0, "highestRedox");
+    s.firstMeteorDone = flag(data.firstMeteorDone, false, "firstMeteorDone");
+    s.nextPhaseUnlocked = flag(data.nextPhaseUnlocked, false, "nextPhaseUnlocked");
+    const prestige = optionalRecord(data.prestige, "prestige");
+    s.prestige.points = number(prestige.points, 0, "prestige.points", true);
+    s.prestige.count = number(prestige.count, 0, "prestige.count", true);
+    function levels(value, upgrades, path) {
+      const input = optionalRecord(value, path);
+      const result = {};
+      upgrades.forEach((u) => {
+        result[u.id] = number(input[u.id], 0, path + "." + u.id, true, u.max);
+      });
+      return result;
+    }
+    s.prestige.upgrades = levels(prestige.upgrades, cfg.prestigeUpgrades, "prestige.upgrades");
+    if (prestige.draft !== undefined) {
+      if (!Array.isArray(prestige.draft) || prestige.draft.some((id) => typeof id !== "string")) {
+        invalid("prestige.draft");
+      }
+      s.prestige.draft = prestige.draft.filter((id) => G.upgradeById(id));
+    }
+    s.pathUpgrades = levels(data.pathUpgrades, cfg.pathUpgrades || [], "pathUpgrades");
+    if (data.eventLog !== undefined) {
+      if (!Array.isArray(data.eventLog)) invalid("eventLog");
+      s.eventLog = data.eventLog.map((entry) => {
+        record(entry, "eventLog entry");
+        if (typeof entry.msg !== "string") invalid("eventLog.msg");
+        return { t: number(entry.t, s.lastSaved, "eventLog.t", false, 8640000000000000), msg: entry.msg };
+      }).slice(0, 40);
+    }
+    const stats = optionalRecord(data.stats, "stats");
+    for (const id in s.stats) s.stats[id] = number(stats[id], 0, "stats." + id, true);
+    // Date's representable range, not an economy cap. Future timestamps are
+    // allowed for clock skew. Loading never awards offline catch-up in this build.
+    s.lastSaved = number(data.lastSaved, s.lastSaved, "lastSaved", false, 8640000000000000);
+    // Finite inputs can still overflow the actual derived economy calculations.
+    if (![...Object.values(G.derive(s)), G.redoxCharge(s), G.complexity(s), G.prestigePoints(s)]
+        .every(Number.isFinite)) invalid("derived economy");
+    return s;
+  };
+
+  // A rejected/unreadable save stays byte-for-byte at SAVE_KEY. All save entry
+  // points (manual, autosave, visibility and unload) use this same guard. Only a
+  // successful load or the player's explicit Reset releases it.
+  G.loadError = null;
   G.save = function (flash) {
-    G.state.lastSaved = Date.now();
+    if (G.loadError) {
+      if (flash && G.ui) G.ui.flashStatus(cfg.ui.saveRecovery);
+      return false;
+    }
+    const lastSaved = Date.now();
     try {
-      localStorage.setItem(cfg.SAVE_KEY, JSON.stringify(G.state));
+      localStorage.setItem(cfg.SAVE_KEY, JSON.stringify(Object.assign({}, G.state, { lastSaved })));
+      G.state.lastSaved = lastSaved;
       if (flash && G.ui) G.ui.flashStatus("Saved");
+      return true;
     } catch (e) {
       if (flash && G.ui) G.ui.flashStatus("Save failed");
+      return false;
     }
   };
 
   G.load = function () {
-    let raw;
     try {
-      raw = localStorage.getItem(cfg.SAVE_KEY);
+      const raw = localStorage.getItem(cfg.SAVE_KEY);
+      if (raw === null) { G.loadError = null; return false; }
+      const candidate = G.hydrateSave(JSON.parse(raw));
+      G.state = candidate;
+      G.loadError = null;
+      return true;
+    } catch (e) {
+      G.loadError = e.message;
+      return false;
+    }
+  };
+
+  G.resetSave = function () {
+    try {
+      localStorage.removeItem(cfg.SAVE_KEY);
     } catch (e) {
       return false;
     }
-    if (!raw) return false;
-    let data;
-    try {
-      data = JSON.parse(raw);
-    } catch (e) {
-      return false;
-    }
-    const s = G.factory();
-    // resources (ignore unknown / removed ids)
-    for (const r in s.resources) s.resources[r] = Number(data.resources?.[r]) || 0;
-    // milestones (only ids that still exist in config)
-    if (data.milestones && typeof data.milestones === "object") {
-      for (const id in s.milestones) s.milestones[id] = !!data.milestones[id];
-    }
-    if (data.discovered && typeof data.discovered === "object") s.discovered = data.discovered;
-    if (data.rareDiscovered && typeof data.rareDiscovered === "object") s.rareDiscovered = data.rareDiscovered;
-    s.highestRedox = Number(data.highestRedox) || 0;
-    s.firstMeteorDone = !!data.firstMeteorDone;
-    s.nextPhaseUnlocked = !!data.nextPhaseUnlocked;
-    // prestige block
-    if (data.prestige) {
-      s.prestige.points = Number(data.prestige.points) || 0;
-      s.prestige.count = Number(data.prestige.count) || 0;
-      s.prestige.upgrades = {};
-      cfg.prestigeUpgrades.forEach((u) => {
-        s.prestige.upgrades[u.id] = Number(data.prestige.upgrades?.[u.id]) || 0;
-      });
-      // only keep drafted ids that still exist in config
-      if (Array.isArray(data.prestige.draft)) {
-        s.prestige.draft = data.prestige.draft.filter((id) => G.upgradeById(id));
-      }
-    }
-    // path upgrades (in-run; only ids that still exist in config)
-    s.pathUpgrades = {};
-    (cfg.pathUpgrades || []).forEach((u) => {
-      s.pathUpgrades[u.id] = Number(data.pathUpgrades?.[u.id]) || 0;
-    });
-    if (Array.isArray(data.eventLog)) s.eventLog = data.eventLog.slice(0, 40);
-    if (data.stats) Object.assign(s.stats, data.stats);
-    s.lastSaved = Number(data.lastSaved) || Date.now();
-    G.state = s;
+    G.loadError = null;
+    G.state = G.factory();
     return true;
   };
 })();
