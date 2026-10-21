@@ -488,8 +488,9 @@
   }
 
   U.flashStatus = function (msg) {
-    el.saveStatus.textContent = msg;
+    el.saveStatus.textContent = G.loadError ? cfg.ui.saveRecovery : msg;
     clearTimeout(statusTimer);
+    if (G.loadError) return;
     statusTimer = setTimeout(() => (el.saveStatus.textContent = ""), 1800);
   };
 
@@ -550,8 +551,7 @@
 
   /* ---- reset ---- */
   function resetGame() {
-    try { localStorage.removeItem(cfg.SAVE_KEY); } catch (e) {}
-    G.state = G.factory();
+    if (!G.resetSave()) { U.flashStatus("Reset failed"); return; }
     el._nextBuilt = false;
     clearNarration();
     U.onMilestoneChange();
@@ -583,6 +583,7 @@
 
     applyStaticText();
     G.load();
+    if (G.loadError) U.flashStatus(cfg.ui.saveRecovery);
 
     $("saveBtn").addEventListener("click", () => G.save(true));
     $("resetBtn").addEventListener("click", resetGame);
